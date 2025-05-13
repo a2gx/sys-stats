@@ -1,0 +1,6 @@
+services:
+  daemon:
+    container_name: app_daemon
+    build:
+      context: ../sys-stats__
+      dockerfile: build/Dockerfile
