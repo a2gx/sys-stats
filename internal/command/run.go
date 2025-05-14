@@ -1,25 +1,29 @@
 package command
 
 import (
-	"fmt"
-
+	"github.com/a2gx/sys-stats/internal/daemon"
 	"github.com/spf13/cobra"
 )
 
-func NewRunCommand() *cobra.Command {
-	var detect bool
+const (
+	DefaultLogInterval  = 5
+	DefaultDataInterval = 15
+)
+
+func NewCommandRun() *cobra.Command {
+	var logInterval, dataInterval int
 
 	cmd := &cobra.Command{
 		Use:   "run",
-		Short: "Run the sys-stats daemon",
+		Short: "Start the daemon to collect system statistics",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Println("Running sys-stats daemon...")
-			return nil
+			return daemon.StartDaemon(logInterval, dataInterval)
 		},
 	}
 
-	// Adding flags to the command
-	cmd.Flags().BoolVarP(&detect, "detect", "d", false, "Run daemon in detect mode")
+	// Flags...
+	cmd.Flags().IntVarP(&logInterval, "log-interval", "n", DefaultLogInterval, "Log output interval (in seconds)")
+	cmd.Flags().IntVarP(&dataInterval, "data-interval", "m", DefaultDataInterval, "Data collection period (in seconds)")
 
 	return cmd
 }

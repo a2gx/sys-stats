@@ -11,38 +11,32 @@ start:
 	go run $(APP) run
 
 run: build
-	$(BIN) run
+	$(BIN) run -n 3 -m 7
 
 run-detect: build
 	#$(BIN) run -n 5 -m 15
-	#$(BIN) run --detach
 	$(BIN) run -d
 
 logs: build
-	$(BIN) logs -n 5 -m 15
+	$(BIN) logs
 
 stop: build
 	$(BIN) stop
 
 version: build
-	#$(BIN) --version
 	$(BIN) -v
 
 help: build
-	#$(BIN) --help
 	$(BIN) -h
 
 test:
-	go test -race ./internal/...
-	go test -race ./pkg/...
+	go test -race ./...
 
 lint-install-deps:
 	(which golangci-lint > /dev/null) || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v2.1
 
 lint: lint-install-deps
-	golangci-lint run ./cmd/...
-	golangci-lint run ./internal/...
-	golangci-lint run ./pkg/...
+	golangci-lint run ./...
 
 dc-up:
 	docker-compose up --build -d
