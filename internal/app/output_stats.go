@@ -13,9 +13,12 @@ func OutputStats(logInterval, dataInterval int, done <-chan bool) {
 		return
 	}
 
+	ticker := time.NewTicker(time.Duration(logInterval) * time.Second)
+	defer ticker.Stop()
+
 	for {
 		select {
-		case <-time.After(time.Duration(logInterval) * time.Second):
+		case <-ticker.C:
 			// Отправляем статистику каждые logInterval секунд
 			log.Println("Outputting statistics -->")
 

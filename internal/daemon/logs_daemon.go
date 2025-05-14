@@ -50,9 +50,12 @@ func LogsDaemon() error {
 
 	// Запускаем горутину для чтения логов
 	go func() {
+		ticker := time.NewTicker(100 * time.Millisecond)
+		defer ticker.Stop()
+
 		for {
 			select {
-			case <-time.After(100 * time.Millisecond):
+			case <-ticker.C:
 				// Если файл удалили, выходим из цикла и останавливаем чтение логов
 				if _, err := os.Stat(LogFile); os.IsNotExist(err) {
 					stop <- syscall.SIGTERM
