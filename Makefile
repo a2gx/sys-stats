@@ -7,8 +7,11 @@ LDFLAGS := -X main.release="develop" -X main.buildDate=$(shell date -u +%Y-%m-%d
 build:
 	go build -v -o $(BIN) -ldflags "$(LDFLAGS)" $(APP)
 
-start:
-	go run $(APP) run
+debug-start:
+	go run $(APP) run -d -n 3 -m 5
+
+debug-stop:
+	go run $(APP) stop
 
 run: build
 	$(BIN) run -n 3 -m 7

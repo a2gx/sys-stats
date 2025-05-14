@@ -5,25 +5,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const (
-	DefaultLogInterval  = 5
-	DefaultDataInterval = 15
-)
-
 func NewCommandRun() *cobra.Command {
+	var detect bool
 	var logInterval, dataInterval int
 
 	cmd := &cobra.Command{
 		Use:   "run",
 		Short: "Start the daemon to collect system statistics",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return daemon.StartDaemon(logInterval, dataInterval)
+			return daemon.StartDaemon(detect, logInterval, dataInterval)
 		},
 	}
 
 	// Flags...
-	cmd.Flags().IntVarP(&logInterval, "log-interval", "n", DefaultLogInterval, "Log output interval (in seconds)")
-	cmd.Flags().IntVarP(&dataInterval, "data-interval", "m", DefaultDataInterval, "Data collection period (in seconds)")
+	cmd.Flags().BoolVarP(&detect, "detect", "d", false, "Run the daemon in background mode")
+	cmd.Flags().IntVarP(&logInterval, "log-interval", "n", 5, "Log output interval (in seconds)")
+	cmd.Flags().IntVarP(&dataInterval, "data-interval", "m", 15, "Data collection period (in seconds)")
 
 	return cmd
 }

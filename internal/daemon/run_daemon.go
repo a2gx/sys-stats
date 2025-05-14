@@ -2,13 +2,19 @@ package daemon
 
 import (
 	"fmt"
-	"github.com/a2gx/sys-stats/internal/app"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/a2gx/sys-stats/internal/app"
 )
 
 func RunDaemon(logInterval, dataInterval int) {
+	// Устанавливаем формат логирования
+	log.SetFlags(log.LstdFlags)
+	log.SetPrefix("daemon: ")
+
 	// Канал для перехвата сигналов для корректной остановки
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
@@ -28,4 +34,8 @@ func RunDaemon(logInterval, dataInterval int) {
 
 	// Останавливаем горутины
 	close(cnDone)
+
+	// Удаляем PID файл и лог файл, если они существуют
+	_ = os.Remove(PidFile)
+	_ = os.Remove(LogFile)
 }
