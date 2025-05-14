@@ -49,48 +49,45 @@ func LogsDaemon() error {
 	}
 
 	// Запускаем горутину для чтения логов
-	go readLogsFile(logf, currentPos, stop, cnDone)
+	go func() {
+		for {
+			select {
+			case <-time.After(100 * time.Millisecond):
+				// Если файл удалили, выходим из цикла и останавливаем чтение логов
+				if _, err := os.Stat(LogFile); os.IsNotExist(err) {
+					stop <- syscall.SIGTERM
+					return
+				}
+
+				// Проверяем, есть ли новые данные
+				fi, err := logf.Stat()
+				if err != nil {
+					_, _ = fmt.Fprintf(os.Stderr, "error getting file info: %v\n", err)
+					continue
+				}
+
+				// Если размер файла увеличился, читаем новые данные
+				if size := fi.Size(); size > currentPos {
+					logf.Seek(currentPos, io.SeekStart)
+
+					newScanner := bufio.NewScanner(logf)
+					for newScanner.Scan() {
+						fmt.Println(newScanner.Text())
+					}
+
+					currentPos, _ = logf.Seek(0, io.SeekCurrent)
+				}
+
+			case <-cnDone:
+				return
+			}
+		}
+	}()
 
 	// Ожидаем сигнал завершения
 	<-stop
 	close(cnDone)
 
-	fmt.Println("\nDaemon successfully stopped")
+	fmt.Println("Daemon successfully stopped")
 	return nil
-}
-
-func readLogsFile(logf *os.File, currentPos int64, stop chan os.Signal, done <-chan bool) {
-	for {
-		select {
-		case <-time.After(100 * time.Millisecond):
-			// Проверяем, существует ли файл
-			if _, err := os.Stat(LogFile); os.IsNotExist(err) {
-				fmt.Println("Log file deleted. Stopping daemon...")
-				stop <- syscall.SIGTERM // Отправляем сигнал в канал stop
-				return
-			}
-
-			// Проверяем, есть ли новые данные
-			fi, err := logf.Stat()
-			if err != nil {
-				_, _ = fmt.Fprintf(os.Stderr, "error getting file info: %v\n", err)
-				continue
-			}
-
-			if size := fi.Size(); size > currentPos {
-				// Если размер файла увеличился, читаем новые данные
-				logf.Seek(currentPos, io.SeekStart)
-
-				newScanner := bufio.NewScanner(logf)
-				for newScanner.Scan() {
-					fmt.Println(newScanner.Text())
-				}
-
-				currentPos, _ = logf.Seek(0, io.SeekCurrent)
-			}
-
-		case <-done:
-			return
-		}
-	}
 }
