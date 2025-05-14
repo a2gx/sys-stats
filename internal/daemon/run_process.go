@@ -33,7 +33,7 @@ func RunProcess(logInterval, dataInterval int) {
 
 	fmt.Println("Daemon successfully stopped")
 
-	// Удаляем PID файл и лог файл, если они существуют
+	// Очищаем файлы перед выходом
 	_ = os.Remove(PidFile)
 	_ = os.Remove(LogFile)
 }

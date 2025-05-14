@@ -9,7 +9,7 @@ import (
 
 func StopDaemon() error {
 	defer func() {
-		// Если возникла ошибка, удаляем PID и лог файлы
+		// Удаляем PID и лог файлы если была критическая ошибка
 		_ = os.Remove(PidFile)
 		_ = os.Remove(LogFile)
 	}()
@@ -17,7 +17,7 @@ func StopDaemon() error {
 	// Проверяем существование PID файла
 	data, err := os.ReadFile(PidFile)
 	if err != nil {
-		return fmt.Errorf("daemon not running or error reading PID file: %w", err)
+		return fmt.Errorf("daemon not running: %w", err)
 	}
 
 	pid, err := strconv.Atoi(string(data))
