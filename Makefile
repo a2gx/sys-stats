@@ -7,21 +7,8 @@ LDFLAGS := -X main.release="develop" -X main.buildDate=$(shell date -u +%Y-%m-%d
 build:
 	go build -v -o $(BIN) -ldflags "$(LDFLAGS)" $(APP)
 
-debug-start:
-	go run $(APP) run -d -n 3 -m 5
-
-debug-logs:
-	go run $(APP) logs
-
-debug-stop:
-	go run $(APP) stop
-
 run: build
-	$(BIN) run -n 3 -m 7
-
-run-detect: build
-	#$(BIN) run -n 5 -m 15
-	$(BIN) run -d
+	$(BIN) run -d -n 3 -m 7
 
 logs: build
 	$(BIN) logs
@@ -53,4 +40,4 @@ dc-logs:
 dc-down:
 	docker-compose down
 
-.PHONY: build run run-detect logs stop version help test lint dc-up dc-logs dc-down
+.PHONY: build run logs stop version help test lint dc-up dc-logs dc-down
