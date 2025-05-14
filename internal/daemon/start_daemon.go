@@ -15,20 +15,19 @@ const (
 
 func StartDaemon(detect bool, logInterval, dataInterval int) error {
 	if !detect {
-		RunDaemon(logInterval, dataInterval)
+		RunProcess(logInterval, dataInterval)
 		return nil
 	}
 
-	// Создаем и запускаем фоновый процесс
-	// Нужно запустить эту же команду отдельным процессом и освободить терминал
+	// Что бы запустить процесс в фоне, нужно перенаправить вывод логов в файл
+	// и отвязать процесс от терминала
 	// PID (process ID) - идентификатор процесса сохраним в файл
 
-	// Проверка: если PID-файл существует, значит демон уже запущен
 	if _, err := os.Stat(PidFile); err == nil {
 		return fmt.Errorf("daemon already running")
 	}
 
-	// Подготавливаем вывод в лог-файл
+	// Создаем лог-файл
 	logf, err := os.OpenFile(LogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
 		return fmt.Errorf("error opening log file: %w", err)
@@ -45,9 +44,8 @@ func StartDaemon(detect bool, logInterval, dataInterval int) error {
 	cmd.Stdout = logf
 	cmd.Stderr = logf
 
-	// Отвязываем новый процесс от родителя
-	// Позволяет демону работать в фоновом режиме, стандартная практика для Unix демонов.
-	// TODO на Windows это может вызвать ошибку. Условная компиляция или отключить в рантайме ??
+	// Отвязываем новый процесс от родителя, позволяет демону работать в фоне
+	// TODO Unix-специфично
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Setpgid: true,
 		Pgid:    0,

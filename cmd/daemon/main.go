@@ -13,9 +13,9 @@ func main() {
 		Short: "System Statistics Daemon",
 	}
 
-	// Добавление подкоманд
 	rootCmd.AddCommand(
 		command.NewCommandRun(),
+		command.NewCommandLogs(),
 		command.NewCommandStop(),
 	)
 

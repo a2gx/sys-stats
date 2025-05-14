@@ -20,7 +20,6 @@ func StopDaemon() error {
 		return fmt.Errorf("daemon not running or error reading PID file: %w", err)
 	}
 
-	// Получаем PID
 	pid, err := strconv.Atoi(string(data))
 	if err != nil {
 		return fmt.Errorf("invalid PID in file: %v", err)
@@ -35,7 +34,7 @@ func StopDaemon() error {
 	// Проверяем, существует ли процесс
 	// TODO Unix-специфично
 	if err := process.Signal(syscall.Signal(0)); err != nil {
-		return fmt.Errorf("process with PID %d already finished, PID file removed: %w", pid, err)
+		return fmt.Errorf("process with PID %d already finished: %w", pid, err)
 	}
 
 	// Отправляем сигнал для корректного завершения
