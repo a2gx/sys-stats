@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/a2gx/sys-stats/internal/stats"
 	"log"
 	"time"
 )
@@ -13,7 +14,12 @@ func CollectStats(done <-chan bool) {
 		select {
 		case <-ticker.C:
 			// Собираем статистику раз в секунду
-			log.Println("Collect statistics ...")
+			res, err := stats.GetCpuUsage()
+			if err != nil {
+				log.Printf("error: %v", err)
+			} else {
+				log.Printf("result: %f", res)
+			}
 
 		case <-done:
 			return

@@ -8,7 +8,7 @@ build:
 	go build -v -o $(BIN) -ldflags "$(LDFLAGS)" $(APP)
 
 run: build
-	$(BIN) run -d -n 3 -m 7
+	$(BIN) run -n 3 -m 7
 
 logs: build
 	$(BIN) logs
