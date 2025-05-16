@@ -13,7 +13,6 @@ import (
 func RunProcess(logInterval, dataInterval int) {
 	// Устанавливаем формат логирования
 	log.SetFlags(log.LstdFlags)
-	log.SetPrefix("daemon: ")
 
 	// Канал для безопасной остановки процесса
 	stop := make(chan os.Signal, 1)
