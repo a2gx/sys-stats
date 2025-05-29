@@ -1,9 +1,10 @@
 package app
 
 import (
-	"github.com/a2gx/sys-stats/internal/stats"
 	"log"
 	"time"
+	
+	"github.com/a2gx/sys-stats/internal/stats"
 )
 
 func CollectStats(done <-chan bool) {
@@ -14,7 +15,7 @@ func CollectStats(done <-chan bool) {
 		select {
 		case <-ticker.C:
 			// Собираем статистику раз в секунду
-			res, err := stats.GetCpuUsage()
+			res, err := stats.GetLoadAverage()
 			if err != nil {
 				log.Printf("error: %v", err)
 			} else {

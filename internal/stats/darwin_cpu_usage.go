@@ -8,8 +8,6 @@ import (
 	"os/exec"
 	"regexp"
 	"strconv"
-
-	"github.com/a2gx/sys-stats/pkg/utils"
 )
 
 type CPUStat struct {
@@ -60,8 +58,8 @@ func GetCpuUsage() (CPUStat, error) {
 	}
 
 	return CPUStat{
-		User:   utils.Round(user, 2),
-		System: utils.Round(system, 2),
-		Idle:   utils.Round(idle, 2),
+		User:   user,
+		System: system,
+		Idle:   idle,
 	}, nil
 }

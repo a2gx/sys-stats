@@ -3,13 +3,11 @@
 package stats
 
 import (
-	"bytes"
-	"errors"
-	"os/exec"
-	"regexp"
+	"fmt"
+	"os"
 	"strconv"
-	
-	"github.com/a2gx/sys-stats/pkg/utils"
+	"strings"
+	"time"
 )
 
 type CPUStat struct {
@@ -18,51 +16,83 @@ type CPUStat struct {
 	Idle   float64
 }
 
-// Пример строки: "Cpu(s):  5.3%us,  2.1%sy,  0.0%ni, 90.9%id, ..."
-var re = regexp.MustCompile(`([\d.]+)%us, *([\d.]+)%sy,.*?([\d.]+)%id`)
+type rawCPU struct {
+	user    uint64
+	nice    uint64
+	system  uint64
+	idle    uint64
+	iowait  uint64
+	irq     uint64
+	softirq uint64
+}
 
-// GetCpuUsage извлекает %user, %system и %idle из команды `top` на Linux
-func GetCpuUsage() (CPUStat, error) {
-	cmd := exec.Command("top", "-bn1") // b - batch mode, n1 - один запуск
-	out, err := cmd.Output()
+func readCPUStat() (rawCPU, error) {
+	data, err := os.ReadFile("/proc/stat")
 	if err != nil {
-		return CPUStat{}, err
+		return rawCPU{}, fmt.Errorf("failed to read /proc/stat: %w", err)
 	}
 
-	lines := bytes.Split(out, []byte("\n"))
-	var cpuLine string
+	lines := strings.Split(string(data), "\n")
 	for _, line := range lines {
-		if bytes.Contains(line, []byte("Cpu(s):")) {
-			cpuLine = string(line)
-			break
+		if strings.HasPrefix(line, "cpu ") {
+			fields := strings.Fields(line)
+			if len(fields) < 8 {
+				return rawCPU{}, fmt.Errorf("unexpected format in /proc/stat")
+			}
+			values := make([]uint64, 8)
+			for i := 0; i < 8; i++ {
+				val, err := strconv.ParseUint(fields[i+1], 10, 64)
+				if err != nil {
+					return rawCPU{}, fmt.Errorf("invalid value in /proc/stat: %w", err)
+				}
+				values[i] = val
+			}
+			return rawCPU{
+				user:    values[0],
+				nice:    values[1],
+				system:  values[2],
+				idle:    values[3],
+				iowait:  values[4],
+				irq:     values[5],
+				softirq: values[6],
+			}, nil
 		}
 	}
+	return rawCPU{}, fmt.Errorf("cpu line not found in /proc/stat")
+}
 
-	if cpuLine == "" {
-		return CPUStat{}, errors.New("CPU usage line not found")
+func calculateCPUStat(start, end rawCPU) CPUStat {
+	startTotal := start.user + start.nice + start.system + start.idle + start.iowait + start.irq + start.softirq
+	endTotal := end.user + end.nice + end.system + end.idle + end.iowait + end.irq + end.softirq
+
+	totalDelta := float64(endTotal - startTotal)
+	if totalDelta == 0 {
+		return CPUStat{}
 	}
 
-	matches := re.FindStringSubmatch(cpuLine)
-	if len(matches) != 4 {
-		return CPUStat{}, errors.New("failed to parse CPU usage line")
-	}
-
-	user, err := strconv.ParseFloat(matches[1], 64)
-	if err != nil {
-		return CPUStat{}, err
-	}
-	system, err := strconv.ParseFloat(matches[2], 64)
-	if err != nil {
-		return CPUStat{}, err
-	}
-	idle, err := strconv.ParseFloat(matches[3], 64)
-	if err != nil {
-		return CPUStat{}, err
-	}
+	userDelta := float64((end.user + end.nice) - (start.user + start.nice))
+	systemDelta := float64((end.system + end.irq + end.softirq) - (start.system + start.irq + start.softirq))
+	idleDelta := float64((end.idle + end.iowait) - (start.idle + start.iowait))
 
 	return CPUStat{
-		User:   utils.Round(user, 2),
-		System: utils.Round(system, 2),
-		Idle:   utils.Round(idle, 2),
-	}, nil
+		User:   100 * userDelta / totalDelta,
+		System: 100 * systemDelta / totalDelta,
+		Idle:   100 * idleDelta / totalDelta,
+	}
+}
+
+func GetCpuUsage() (CPUStat, error) {
+	start, err := readCPUStat()
+	if err != nil {
+		return CPUStat{}, err
+	}
+
+	time.Sleep(1 * time.Second)
+
+	end, err := readCPUStat()
+	if err != nil {
+		return CPUStat{}, err
+	}
+
+	return calculateCPUStat(start, end), nil
 }

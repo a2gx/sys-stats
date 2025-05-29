@@ -8,8 +8,6 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
-	
-	"github.com/a2gx/sys-stats/pkg/utils"
 )
 
 // GetLoadAverage возвращает среднюю загрузку системы за последние 1, 5 и 15 минут.
@@ -41,5 +39,5 @@ func GetLoadAverage() (float64, error) {
 		ctn += 1
 	}
 
-	return utils.Round(sum/ctn, 2), nil
+	return sum / ctn, nil
 }
