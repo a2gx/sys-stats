@@ -1,13 +1,17 @@
 package app
 
 import (
+	"fmt"
+	"github.com/a2gx/sys-stats/internal/config"
 	"log"
 	"time"
-	
+
 	"github.com/a2gx/sys-stats/internal/stats"
 )
 
-func CollectStats(done <-chan bool) {
+func CollectStats(cfg *config.Config, done <-chan bool) {
+	fmt.Printf("Collecting statistics with configuration: %+v\n", cfg)
+
 	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
 

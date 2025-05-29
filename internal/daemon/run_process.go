@@ -2,6 +2,7 @@ package daemon
 
 import (
 	"fmt"
+	"github.com/a2gx/sys-stats/internal/config"
 	"log"
 	"os"
 	"os/signal"
@@ -10,7 +11,7 @@ import (
 	"github.com/a2gx/sys-stats/internal/app"
 )
 
-func RunProcess(logInterval, dataInterval int) {
+func RunProcess(cfg *config.Config, logInterval, dataInterval int) {
 	// Устанавливаем формат логирования
 	log.SetFlags(log.LstdFlags)
 
@@ -23,7 +24,7 @@ func RunProcess(logInterval, dataInterval int) {
 	fmt.Println("Daemon successfully started")
 
 	// Запускаем горутины сбора и отправки статистики
-	go app.CollectStats(cnDone)
+	go app.CollectStats(cfg, cnDone)
 	go app.OutputStats(logInterval, dataInterval, cnDone)
 
 	// Останавливаем горутины
