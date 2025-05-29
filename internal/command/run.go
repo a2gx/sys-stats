@@ -25,7 +25,7 @@ func NewCommandRun() *cobra.Command {
 	}
 
 	// Flags...
-	cmd.Flags().StringVar(&configFile, "config", "/etc/sys-stats/config.yaml", "Path to configuration file")
+	cmd.Flags().StringVar(&configFile, "config", "/configs/config.yaml", "Path to configuration file")
 	cmd.Flags().BoolVarP(&detect, "detect", "d", false, "Run the daemon in background mode")
 	cmd.Flags().IntVarP(&logInterval, "log-interval", "n", 5, "Log output interval (in seconds)")
 	cmd.Flags().IntVarP(&dataInterval, "data-interval", "m", 15, "Data collection period (in seconds)")
