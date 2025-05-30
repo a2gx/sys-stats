@@ -2,13 +2,16 @@ package app
 
 import (
 	"context"
-	"github.com/a2gx/sys-stats/internal/config"
+	"fmt"
 	"sync"
 	"time"
+
+	"github.com/a2gx/sys-stats/internal/config"
+	"github.com/a2gx/sys-stats/internal/stats"
 )
 
 type StatsCollector struct {
-	history []map[string]interface{}
+	history []Metrics
 	mu      sync.Mutex
 	cfg     *config.Config
 	opt     Options
@@ -19,9 +22,14 @@ type Options struct {
 	LogInterval  int
 }
 
+type Metrics struct {
+	CPUUsage    stats.CPUStat
+	LoadAverage float64
+}
+
 func NewCollector(cfg *config.Config, opts Options) *StatsCollector {
 	return &StatsCollector{
-		history: make([]map[string]interface{}, opts.LogInterval),
+		history: make([]Metrics, 0, opts.LogInterval),
 		cfg:     cfg,
 		opt:     opts,
 	}
@@ -39,7 +47,7 @@ func (sc *StatsCollector) collectStats(ctx context.Context) {
 	for {
 		select {
 		case <-ticker.C:
-			// TODO: Collect statistics here
+			sc.saveHistory()
 		case <-ctx.Done():
 			return
 		}
@@ -68,4 +76,13 @@ func (sc *StatsCollector) outputStats(ctx context.Context) {
 			return
 		}
 	}
+}
+
+func (sc *StatsCollector) saveHistory() {
+	entry := collectMetric(sc.cfg)
+
+	sc.mu.Lock()
+	fmt.Printf("Collected stats: %+v\n", entry)
+	sc.history = append(sc.history, entry)
+	sc.mu.Unlock()
 }
