@@ -25,6 +25,7 @@ type Options struct {
 type History struct {
 	CPUUsage    stats.CPUStat
 	LoadAverage float64
+	DiskUsage   stats.DiskUsage
 }
 
 func NewCollector(cfg *config.Config, opts Options) *StatsCollector {
@@ -99,6 +100,7 @@ func (sc *StatsCollector) readHistory() History {
 	result := History{
 		CPUUsage:    calculateCPUUsage(sc.history, count),
 		LoadAverage: calculateLoadAverage(sc.history, count),
+		DiskUsage:   calculateDiskUsage(sc.history, count),
 		// Можно добавить другие метрики, если нужно
 	}
 

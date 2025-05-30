@@ -1,2 +1,3 @@
 cpu_usage: true
 load_average: true
+disk_usage: true

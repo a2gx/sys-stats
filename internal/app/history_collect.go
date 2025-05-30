@@ -35,14 +35,29 @@ func historyCollect(cfg *config.Config) History {
 				return
 			}
 
-			loadAvg, err := stats.GetLoadAverage()
+			stat, err := stats.GetLoadAverage()
 			if err != nil {
 				log.Printf("failed to collect `LoadAverage`: %v", err)
 				return
 			}
 
 			mu.Lock()
-			entry.LoadAverage = loadAvg
+			entry.LoadAverage = stat
+			mu.Unlock()
+		},
+		func() {
+			if !cfg.DiskUsage {
+				return
+			}
+
+			stat, err := stats.GetDiskUsage()
+			if err != nil {
+				log.Printf("failed to collect `DiskUsage`: %v", err)
+				return
+			}
+
+			mu.Lock()
+			entry.DiskUsage = stat
 			mu.Unlock()
 		},
 		// Можно добавить другие метрики, если нужно

@@ -27,3 +27,17 @@ func calculateLoadAverage(history []History, count int) float64 {
 
 	return sum / float64(count)
 }
+
+func calculateDiskUsage(history []History, count int) stats.DiskUsage {
+	var d stats.DiskUsage
+
+	for _, entry := range history {
+		d.TPS += entry.DiskUsage.TPS
+		d.KBps += entry.DiskUsage.KBps
+	}
+
+	return stats.DiskUsage{
+		TPS:  d.TPS / float64(count),
+		KBps: d.KBps / float64(count),
+	}
+}
