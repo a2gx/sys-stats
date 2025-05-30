@@ -11,7 +11,7 @@ import (
 )
 
 type StatsCollector struct {
-	history []Metrics
+	history []History
 	mu      sync.Mutex
 	cfg     *config.Config
 	opt     Options
@@ -22,14 +22,14 @@ type Options struct {
 	LogInterval  int
 }
 
-type Metrics struct {
+type History struct {
 	CPUUsage    stats.CPUStat
 	LoadAverage float64
 }
 
 func NewCollector(cfg *config.Config, opts Options) *StatsCollector {
 	return &StatsCollector{
-		history: make([]Metrics, 0, opts.LogInterval),
+		history: make([]History, 0, opts.LogInterval),
 		cfg:     cfg,
 		opt:     opts,
 	}
@@ -71,7 +71,8 @@ func (sc *StatsCollector) outputStats(ctx context.Context) {
 	for {
 		select {
 		case <-ticker.C:
-		// TODO: Output statistics here
+			d := sc.readHistory()
+			fmt.Printf("Output: %+v\n", d)
 		case <-ctx.Done():
 			return
 		}
@@ -79,10 +80,30 @@ func (sc *StatsCollector) outputStats(ctx context.Context) {
 }
 
 func (sc *StatsCollector) saveHistory() {
-	entry := collectMetric(sc.cfg)
-
 	sc.mu.Lock()
-	fmt.Printf("Collected stats: %+v\n", entry)
-	sc.history = append(sc.history, entry)
-	sc.mu.Unlock()
+	defer sc.mu.Unlock()
+
+	// Сбор статистики и добавление в историю
+	sc.history = append(sc.history, historyCollect(sc.cfg))
+}
+
+func (sc *StatsCollector) readHistory() History {
+	sc.mu.Lock()
+	defer sc.mu.Unlock()
+
+	count := len(sc.history)
+	if count == 0 {
+		return History{} // возврат пустой статистики, если нет данных
+	}
+
+	result := History{
+		CPUUsage:    calculateCPUUsage(sc.history, count),
+		LoadAverage: calculateLoadAverage(sc.history, count),
+		// Можно добавить другие метрики, если нужно
+	}
+
+	// Очищаем историю
+	sc.history = sc.history[:0]
+
+	return result
 }

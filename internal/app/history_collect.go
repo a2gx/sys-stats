@@ -8,8 +8,8 @@ import (
 	"github.com/a2gx/sys-stats/internal/stats"
 )
 
-func collectMetric(cfg *config.Config) Metrics {
-	entry := Metrics{}
+func historyCollect(cfg *config.Config) History {
+	entry := History{}
 
 	var wg sync.WaitGroup
 	var mu sync.Mutex
@@ -45,8 +45,10 @@ func collectMetric(cfg *config.Config) Metrics {
 			entry.LoadAverage = loadAvg
 			mu.Unlock()
 		},
+		// Можно добавить другие метрики, если нужно
 	}
 
+	// Запускаем сбор статистики в отдельных горутинах
 	for _, collect := range collects {
 		wg.Add(1)
 
