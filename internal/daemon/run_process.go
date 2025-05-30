@@ -2,13 +2,13 @@ package daemon
 
 import (
 	"fmt"
-	"github.com/a2gx/sys-stats/internal/config"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/a2gx/sys-stats/internal/app"
+	"github.com/a2gx/sys-stats/internal/config"
 )
 
 func RunProcess(cfg *config.Config, logInterval, dataInterval int) {

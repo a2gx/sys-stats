@@ -2,11 +2,12 @@ package daemon
 
 import (
 	"fmt"
-	"github.com/a2gx/sys-stats/internal/config"
 	"os"
 	"os/exec"
 	"strconv"
 	"syscall"
+
+	"github.com/a2gx/sys-stats/internal/config"
 )
 
 const (
