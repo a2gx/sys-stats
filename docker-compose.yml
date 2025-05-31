@@ -1,6 +1,11 @@
 services:
+
   daemon:
     container_name: app_daemon
     build:
-      context: ../sys-stats__
-      dockerfile: build/Dockerfile
+      context: .
+      dockerfile: ./build/Dockerfile
+    ports:
+      - "50055:50055"
+    volumes:
+      - ./configs:/etc/sys-stats:ro

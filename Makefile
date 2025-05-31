@@ -31,13 +31,11 @@ lint-install-deps:
 lint: lint-install-deps
 	golangci-lint run ./...
 
-dc-up:
-	docker-compose up --build -d
-
-dc-logs:
-	docker-compose logs -f
-
-dc-down:
+up:
+	docker-compose up --build #-d
+down:
 	docker-compose down
+logs:
+	docker-compose logs -f
 
 .PHONY: build run logs stop version help test lint dc-up dc-logs dc-down

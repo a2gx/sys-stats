@@ -1,6 +1,7 @@
 package daemon
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -8,28 +9,34 @@ import (
 	"syscall"
 
 	"github.com/a2gx/sys-stats/internal/app"
+	"github.com/a2gx/sys-stats/internal/config"
 )
 
-func RunProcess(logInterval, dataInterval int) {
+func RunProcess(cfg *config.Config, logInterval, dataInterval int) {
 	// Устанавливаем формат логирования
 	log.SetFlags(log.LstdFlags)
-	log.SetPrefix("daemon: ")
 
 	// Канал для безопасной остановки процесса
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
 
-	cnDone := make(chan bool)
+	// Создаем контекст с возможностью отмены
+	ctx, cancel := context.WithCancel(context.Background())
 
 	fmt.Println("Daemon successfully started")
 
-	// Запускаем горутины сбора и отправки статистики
-	go app.CollectStats(cnDone)
-	go app.OutputStats(logInterval, dataInterval, cnDone)
+	// Запускаем сбор статистики
+	collector := app.NewCollector(cfg, app.Options{
+		DataInterval: dataInterval,
+		LogInterval:  logInterval,
+	})
+	collector.Start(ctx)
 
-	// Останавливаем горутины
+	// Ожидаем сигнал остановки
 	<-stop
-	close(cnDone)
+
+	// Отменяем контекст, чтобы остановить горутины сбора статистики
+	cancel()
 
 	fmt.Println("Daemon successfully stopped")
 

@@ -6,6 +6,8 @@ import (
 	"os/exec"
 	"strconv"
 	"syscall"
+
+	"github.com/a2gx/sys-stats/internal/config"
 )
 
 const (
@@ -13,9 +15,9 @@ const (
 	LogFile = "/tmp/daemon.log"
 )
 
-func StartDaemon(detect bool, logInterval, dataInterval int) error {
+func StartDaemon(cfg *config.Config, detect bool, logInterval, dataInterval int) error {
 	if !detect {
-		RunProcess(logInterval, dataInterval)
+		RunProcess(cfg, logInterval, dataInterval)
 		return nil
 	}
 
