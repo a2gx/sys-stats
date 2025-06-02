@@ -6,7 +6,7 @@ on:
 
 env:
   GO111MODULE: "on"
-  GO_VERSION: 1.23
+  GO_VERSION: 1.24
 
 jobs:
   lint:
@@ -24,7 +24,7 @@ jobs:
       - name: Установка golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.62.2
+          version: v2.1.6
 
   tests:
     name: Запуск тестов
