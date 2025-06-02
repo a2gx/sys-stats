@@ -24,7 +24,7 @@ jobs:
       - name: Установка golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v2.1.6
+          version: v1.62.2
 
   tests:
     name: Запуск тестов
