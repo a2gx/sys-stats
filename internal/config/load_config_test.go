@@ -93,7 +93,9 @@ func TestLoadConfig(t *testing.T) {
 			if tt.config != "" {
 				tmpFile, err := os.CreateTemp("", "config-*.yaml")
 				require.NoError(t, err)
-				defer os.Remove(tmpFile.Name())
+				defer func(name string) {
+					_ = os.Remove(name)
+				}(tmpFile.Name())
 
 				_, err = tmpFile.Write([]byte(tt.config))
 				require.NoError(t, err)
@@ -106,16 +108,16 @@ func TestLoadConfig(t *testing.T) {
 				if old, exists := os.LookupEnv(k); exists {
 					savedEnv[k] = old
 				}
-				os.Setenv(k, v)
+				_ = os.Setenv(k, v)
 			}
 
 			// cleanup after test
 			defer func() {
 				for k := range tt.env {
 					if old, exists := savedEnv[k]; exists {
-						os.Setenv(k, old) // restore previous value
+						_ = os.Setenv(k, old) // restore previous value
 					} else {
-						os.Unsetenv(k)
+						_ = os.Unsetenv(k)
 					}
 				}
 			}()
@@ -143,15 +145,17 @@ func TestLoadConfigNestedStruct(t *testing.T) {
 	// create config file
 	tmpFile, err := os.CreateTemp("", "config-*.yaml")
 	require.NoError(t, err)
-	defer os.Remove(tmpFile.Name())
+	defer func(name string) {
+		_ = os.Remove(name)
+	}(tmpFile.Name())
 
 	_, err = tmpFile.Write([]byte(nestedFileContent))
 	require.NoError(t, err)
 
-	os.Setenv("SERVER_HOST", "server.env")
-	os.Setenv("SERVER_PORT", "9090") // Change port value via ENV
-	os.Setenv("DATABASE_HOST", "database.env")
-	os.Setenv("DATABASE_PORT", "6000") // Similarly for database
+	_ = os.Setenv("SERVER_HOST", "server.env")
+	_ = os.Setenv("SERVER_PORT", "9090") // Change port value via ENV
+	_ = os.Setenv("DATABASE_HOST", "database.env")
+	_ = os.Setenv("DATABASE_PORT", "6000") // Similarly for database
 
 	var conf TestConfigNested
 	err = LoadConfig[TestConfigNested](&conf, tmpFile.Name())

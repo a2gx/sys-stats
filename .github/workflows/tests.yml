@@ -43,3 +43,27 @@ jobs:
 
       - name: Проверка покрытия кода тестами
         run: go tool cover -html=coverage.out -o coverage.html
+
+  tests_makefile:
+    name: Запуск тестов с Makefile
+    runs-on: ubuntu-latest
+    steps:
+      - name: Настройка Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ~${{ env.GO_VERSION }}
+
+      - name: Загрузка кода
+        uses: actions/checkout@v3
+
+      - name: Запуск тестов с Makefile
+        run: make test
+
+      - name: make lint
+        run: make lint
+
+      - name: make build
+        run: make build
+
+      - name: make test
+        run: make test
