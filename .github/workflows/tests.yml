@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Daemon System Stats
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
 
 env:
   GO111MODULE: "on"
-  GO_VERSION: "1.24"
+  GO_VERSION: 1.24
 
 jobs:
   lint:
@@ -24,13 +24,12 @@ jobs:
 
       - name: Загрузка кода
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
       - name: Установка golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
           version: v2.1
+          working-directory: ${{ env.BRANCH }}
 
       - name: Запуск линтера
         run: golangci-lint run ./... --timeout=5m
