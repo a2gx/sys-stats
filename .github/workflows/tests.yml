@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install golangci-lint
-        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v2.1
+        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v2.1.6
 
       - name: Запуск линтера
         run: golangci-lint run ./...
