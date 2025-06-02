@@ -29,6 +29,9 @@ jobs:
         with:
           version: v2.1.6
 
+      - name: Запуск линтера
+        run: golangci-lint run ./... --timeout=5m
+
 #  build:
 #    name: Сборка проекта
 #    runs-on: ubuntu-latest
