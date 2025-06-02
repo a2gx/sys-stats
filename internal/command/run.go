@@ -1,7 +1,6 @@
 package command
 
 import (
-	"fmt"
 	"github.com/a2gx/sys-stats/internal/config"
 	"github.com/a2gx/sys-stats/internal/daemon"
 	"github.com/spf13/cobra"
