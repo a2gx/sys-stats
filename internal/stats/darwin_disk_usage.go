@@ -2,6 +2,12 @@
 
 package stats
 
-func GetDiskUsage() (DiskStat, error) {
-	return DiskStat{}, nil
+// DiskUsage содержит статистику использования дисков
+type DiskUsage struct {
+	TPS  float64 // Передач в секунду
+	KBps float64 // Килобайт в секунду (чтение + запись)
+}
+
+func GetDiskUsage() (DiskUsage, error) {
+	return DiskUsage{}, nil
 }

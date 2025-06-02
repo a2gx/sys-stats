@@ -71,7 +71,7 @@ func LogsDaemon() error {
 
 				// Если размер файла увеличился, читаем новые данные
 				if size := fi.Size(); size > currentPos {
-					logf.Seek(currentPos, io.SeekStart)
+					_, _ = logf.Seek(currentPos, io.SeekStart)
 
 					newScanner := bufio.NewScanner(logf)
 					for newScanner.Scan() {
