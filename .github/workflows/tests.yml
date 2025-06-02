@@ -1,4 +1,4 @@
-name: Daemon System Stats
+name: Daemon sys-stats
 
 on:
   push:
@@ -45,7 +45,7 @@ jobs:
         run: go tool cover -html=coverage.out -o coverage.html
 
   tests_makefile:
-    name: Запуск тестов с Makefile
+    name: Тест Makefile
     runs-on: ubuntu-latest
     steps:
       - name: Настройка Go
