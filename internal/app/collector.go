@@ -23,8 +23,8 @@ type Options struct {
 }
 
 type History struct {
-	CPUUsage    stats.CPUStat
 	LoadAverage float64
+	CPUUsage    stats.CPUStat
 	DiskUsage   stats.DiskUsage
 }
 

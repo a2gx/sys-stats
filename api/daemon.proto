@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package grpcapi;
+
+option go_package = "github.com/a2gx/sys-stats/api;daemon";
+
+service Daemon {
+  rpc SystemStats(SystemStatsRequest) returns (SystemStatsReply) {}
+}
+
+message SystemStatsRequest {}
+
+message SystemStatsReply {
+  float load_average = 1;
+  CPUStat cpu_usage = 2;
+  DiskUsage disk_usage = 3;
+}
+
+message CPUStat {
+  float user = 1;
+  float system = 2;
+  float idle = 3;
+  float total = 4;
+}
+
+message DiskUsage {
+  uint64 total_space = 1;
+  uint64 used_space = 2;
+  uint64 free_space = 3;
+  float usage_percent = 4;
+}
