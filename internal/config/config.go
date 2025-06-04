@@ -17,8 +17,8 @@ func NewConfig(configFile string) (*Config, error) {
 		return nil, err
 	}
 
-	instance.GRPC.Host = "0.0.0.0"
-	instance.GRPC.Port = 50051
+	//instance.GRPC.Host = "0.0.0.0"
+	//instance.GRPC.Port = 50051
 
 	return instance, nil
 }
