@@ -11,6 +11,7 @@ import (
 	"github.com/a2gx/sys-stats/proto"
 	"github.com/spf13/pflag"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
@@ -30,14 +31,14 @@ func main() {
 	var attempts int
 
 	for {
-		conn, err = grpc.NewClient(addr)
+		conn, err = grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err == nil {
 			break // Connection successful
 		}
 
 		attempts++
 
-		fmt.Printf("Failed to connection, attempt: %d\n", attempts)
+		fmt.Printf("Failed to connection, %d attempt, error: %v\n", attempts, err)
 		time.Sleep(3 * time.Second)
 
 		if attempts >= 10 {
@@ -67,8 +68,11 @@ func main() {
 			break
 		}
 
-		fmt.Printf("Load Average: \t%.2f\n", resp.LoadAverage)
-		fmt.Printf("Cpu Usage: \t%+v\n", resp.CpuUsage)
-		fmt.Printf("Disk Usage: \t%+v\n", resp.DiskUsage)
+		fmt.Printf(
+			"Received data:\n\tLoad Average: %.2f\n\tCpu Usage: %+v\n\tDisk Usage: %+v\n--------------\n",
+			resp.LoadAverage,
+			resp.CpuUsage,
+			resp.DiskUsage,
+		)
 	}
 }

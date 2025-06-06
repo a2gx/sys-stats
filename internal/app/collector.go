@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"sync"
 	"time"
 
@@ -11,10 +10,11 @@ import (
 )
 
 type StatsCollector struct {
-	history []History
-	mu      sync.Mutex
-	cfg     *config.Config
-	opt     Options
+	history  []History
+	provider func(history *History)
+	mu       sync.Mutex
+	cfg      *config.Config
+	opt      Options
 }
 
 type Options struct {
@@ -28,11 +28,12 @@ type History struct {
 	DiskUsage   stats.DiskUsage
 }
 
-func NewCollector(cfg *config.Config, opts Options) *StatsCollector {
+func NewCollector(cfg *config.Config, provider func(history *History), opts Options) *StatsCollector {
 	return &StatsCollector{
-		history: make([]History, 0, opts.LogInterval),
-		cfg:     cfg,
-		opt:     opts,
+		history:  make([]History, 0, opts.LogInterval),
+		provider: provider,
+		cfg:      cfg,
+		opt:      opts,
 	}
 }
 
@@ -73,7 +74,9 @@ func (sc *StatsCollector) outputStats(ctx context.Context) {
 		select {
 		case <-ticker.C:
 			d := sc.readHistory()
-			fmt.Printf("Output: %+v\n", d)
+			if sc.provider != nil {
+				sc.provider(&d) // Передаем собранную статистику в провайдер
+			}
 		case <-ctx.Done():
 			return
 		}
