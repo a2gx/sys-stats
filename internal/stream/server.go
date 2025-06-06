@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/a2gx/sys-stats/internal/app"
-	"github.com/a2gx/sys-stats/proto"
+	daemon "github.com/a2gx/sys-stats/proto"
 )
 
 type Server struct {
