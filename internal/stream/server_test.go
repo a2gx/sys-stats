@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func startTestServer(t *testing.T) (*Server, string, func()) {
@@ -23,11 +24,13 @@ func startTestServer(t *testing.T) (*Server, string, func()) {
 	grpcServer := grpc.NewServer()
 	daemon.RegisterDaemonStreamServer(grpcServer, srv)
 
-	go grpcServer.Serve(lis)
+	go func() {
+		_ = grpcServer.Serve(lis)
+	}()
 
 	return srv, lis.Addr().String(), func() {
 		grpcServer.Stop()
-		lis.Close()
+		_ = lis.Close()
 	}
 }
 
@@ -35,9 +38,11 @@ func TestSysStatsStream_Broadcast(t *testing.T) {
 	srv, addr, cleanup := startTestServer(t)
 	defer cleanup()
 
-	conn, err := grpc.Dial(addr, grpc.WithInsecure())
+	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	require.NoError(t, err)
-	defer conn.Close()
+	defer func(conn *grpc.ClientConn) {
+		_ = conn.Close()
+	}(conn)
 
 	client := daemon.NewDaemonStreamClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
