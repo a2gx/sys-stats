@@ -4,8 +4,24 @@ services:
     container_name: app_daemon
     build:
       context: .
-      dockerfile: ./build/Dockerfile
+      dockerfile: build/Dockerfile_daemon
     ports:
       - "50055:50055"
     volumes:
       - ./configs:/etc/sys-stats:ro
+    environment:
+      - GRPC_HOST=0.0.0.0
+      - GRPC_PORT=50055
+
+  client:
+    container_name: client
+    build:
+      context: .
+      dockerfile: ./build/Dockerfile_client
+    depends_on:
+      - daemon
+    volumes:
+      - ./configs:/configs:ro
+    environment:
+      - GRPC_HOST=app_daemon
+      - GRPC_PORT=50055

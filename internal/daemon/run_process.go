@@ -10,6 +10,7 @@ import (
 
 	"github.com/a2gx/sys-stats/internal/app"
 	"github.com/a2gx/sys-stats/internal/config"
+	"github.com/a2gx/sys-stats/internal/stream"
 )
 
 func RunProcess(cfg *config.Config, logInterval, dataInterval int) {
@@ -25,12 +26,19 @@ func RunProcess(cfg *config.Config, logInterval, dataInterval int) {
 
 	fmt.Println("Daemon successfully started")
 
+	addr := fmt.Sprintf("%s:%d", cfg.GRPC.Host, cfg.GRPC.Port)
+	streamServer := stream.NewServer(addr)
+
 	// Запускаем сбор статистики
-	collector := app.NewCollector(cfg, app.Options{
+	collector := app.NewCollector(cfg, streamServer.Broadcast, app.Options{
 		DataInterval: dataInterval,
 		LogInterval:  logInterval,
 	})
 	collector.Start(ctx)
+
+	if err := streamServer.Start(ctx); err != nil {
+		log.Fatalf("Failed to start gRPC server: %v", err)
+	}
 
 	// Ожидаем сигнал остановки
 	<-stop

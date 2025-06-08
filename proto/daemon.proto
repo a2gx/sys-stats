@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package daemon;
+
+option go_package = "github.com/a2gx/sys-stats/proto/daemon";
+
+service DaemonStream {
+  rpc SysStatsStream(SysStatsStreamRequest) returns (stream SysStatsStreamResponse);
+}
+
+message SysStatsStreamRequest {}
+
+message SysStatsStreamResponse {
+  float load_average = 1;
+  CpuUsage cpu_usage = 2;
+  DiskUsage disk_usage = 3;
+}
+
+message CpuUsage {
+  float user = 1;
+  float system = 2;
+  float idle = 3;
+}
+
+message DiskUsage {
+  float tps = 1;
+  float kb_ps = 2;
+}

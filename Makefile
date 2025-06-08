@@ -8,7 +8,7 @@ build:
 	go build -v -o $(BIN) -ldflags "$(LDFLAGS)" $(APP)
 
 run: build
-	$(BIN) run -d -n 3 -m 7
+	$(BIN) run -n 3 -m 7
 
 stop: build
 	$(BIN) stop
@@ -27,6 +27,11 @@ lint-install-deps:
 
 lint: lint-install-deps
 	golangci-lint run ./...
+
+generate:
+	protoc --go_out=. --go_opt=paths=source_relative \
+		--go-grpc_out=. \
+		--go-grpc_opt=paths=source_relative proto/daemon.proto
 
 up:
 	docker-compose up --build
