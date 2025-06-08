@@ -37,11 +37,42 @@ func (spm *SystemProcessManager) FindProcess(pid int) (Process, error) {
 }
 
 // NewDaemonManager создает новый менеджер демона
-func NewDaemonManager(cfg *config.Config) *DaemonManager {
-	return &DaemonManager{
+func NewDaemonManager(cfg *config.Config, options ...Option) *DaemonManager {
+	dm := &DaemonManager{
 		cfg:            cfg,
 		pidFilePath:    "/tmp/daemon.pid",
 		logFilePath:    "/tmp/daemon.log",
 		processManager: &SystemProcessManager{},
+	}
+
+	// Применяем опции конфигурации
+	for _, option := range options {
+		option(dm)
+	}
+
+	return dm
+}
+
+// Option представляет функциональную опцию для конфигурации DaemonManager
+type Option func(*DaemonManager)
+
+// WithPidFilePath устанавливает путь к PID-файлу
+func WithPidFilePath(path string) Option {
+	return func(dm *DaemonManager) {
+		dm.pidFilePath = path
+	}
+}
+
+// WithLogFilePath устанавливает путь к лог-файлу
+func WithLogFilePath(path string) Option {
+	return func(dm *DaemonManager) {
+		dm.logFilePath = path
+	}
+}
+
+// WithProcessManager устанавливает менеджер процессов (для тестирования)
+func WithProcessManager(pm ProcessManager) Option {
+	return func(dm *DaemonManager) {
+		dm.processManager = pm
 	}
 }
