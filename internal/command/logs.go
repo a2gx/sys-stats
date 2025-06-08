@@ -8,7 +8,7 @@ import (
 func NewLogs() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "logs",
-		Short: "Display logs from the sys-stats daemon",
+		Short: "Display logs from the daemon daemon",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Создаем менеджер демона с параметрами по умолчанию
 			dm := daemon.NewDaemonManager(nil)

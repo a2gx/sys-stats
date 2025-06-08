@@ -8,10 +8,12 @@ import (
 )
 
 func NewRun() *cobra.Command {
-	var background bool
-	var configFile string
-	var host string
-	var port int
+	var (
+		background bool
+		configFile string
+		host       string
+		port       int
+	)
 
 	cmd := &cobra.Command{
 		Use:   "run",

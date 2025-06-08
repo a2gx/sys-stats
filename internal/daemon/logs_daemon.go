@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// LogsDaemon отображает логи демона sys-stats.
+// LogsDaemon отображает логи демона daemon.
 func (dm *DaemonManager) LogsDaemon() error {
 	// Проверяем, запущен ли демон
 	if _, err := os.Stat(dm.pidFilePath); os.IsNotExist(err) {

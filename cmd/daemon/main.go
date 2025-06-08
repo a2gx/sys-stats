@@ -10,7 +10,7 @@ import (
 
 func main() {
 	rootCmd := cobra.Command{
-		Use:   "sys-stats",
+		Use:   "daemon",
 		Short: "System Statistics Daemon",
 	}
 

@@ -1,5 +1,5 @@
-BIN := ./bin/sys-stats
-APP := ./cmd/sys-stats
+BIN := ./bin/daemon
+APP := ./cmd/daemon
 
 GIT_HASH := $(shell git log --format="%h" -n 1)
 LDFLAGS := -X main.release="develop" -X main.buildDate=$(shell date -u +%Y-%m-%dT%H:%M:%S) -X main.gitHash=$(GIT_HASH)
@@ -43,4 +43,4 @@ dc-down:
 dc-logs:
 	docker-compose logs -f
 
-.PHONY: build run logs stop version help test lint generate up down
+.PHONY: build run logs stop version help test lint generate dc-up dc-down dc-logs

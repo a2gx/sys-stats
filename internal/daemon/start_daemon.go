@@ -92,10 +92,10 @@ func (dm *DaemonManager) runProcess() error {
 	// Запускаем компоненты демона
 	// TODO
 	go func() {
-		tickerWork := time.NewTicker(500 * time.Millisecond)
+		tickerWork := time.NewTicker(time.Second)
 		defer tickerWork.Stop()
 
-		tickerStop := time.NewTicker(20 * time.Second)
+		tickerStop := time.NewTicker(10 * time.Second)
 		defer tickerStop.Stop()
 
 		for {

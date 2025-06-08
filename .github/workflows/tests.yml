@@ -1,4 +1,4 @@
-name: Daemon sys-stats
+name: Daemon daemon
 
 on:
   push:

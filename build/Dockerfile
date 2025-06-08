@@ -31,4 +31,7 @@ COPY --from=build ${BIN_FILE} ${BIN_FILE}
 ENV CONFIG_FILE /etc/sys-stats/config.yaml
 COPY ./configs/config.yaml ${CONFIG_FILE}
 
-CMD ${BIN_FILE} run -n 3 -m 7 --config ${CONFIG_FILE}
+CMD ${BIN_FILE} run \
+    --host ${GRPC_HOST:-0.0.0.0} \
+    --port ${GRPC_PORT:-50051} \
+    --config ${CONFIG_FILE}
