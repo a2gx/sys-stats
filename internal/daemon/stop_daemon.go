@@ -7,6 +7,7 @@ import (
 	"syscall"
 )
 
+// StopDaemon останавливает демона запущенного в фоновом режиме
 func (dm *DaemonManager) StopDaemon() error {
 	cleanup := func() {
 		// Очистка ресурсов если была критическая ошибка

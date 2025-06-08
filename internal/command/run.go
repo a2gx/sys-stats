@@ -43,7 +43,7 @@ func NewRun() *cobra.Command {
 	cmd.Flags().BoolVarP(&background, "background", "b", false, "Run the daemon in background mode")
 	cmd.Flags().StringVar(&host, "host", "localhost", "Host fot gRPC server")
 	cmd.Flags().IntVar(&port, "port", 50055, "Port fot gRPC server")
-	cmd.Flags().StringVar(&configFile, "config", "/configs/config.yaml", "Path to the configuration file")
+	cmd.Flags().StringVar(&configFile, "config", "./configs/config.yaml", "Path to the configuration file")
 
 	return cmd
 }

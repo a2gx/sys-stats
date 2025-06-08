@@ -18,6 +18,7 @@ type StartDaemonFlags struct {
 	Port       int
 }
 
+// StartDaemon запускает демон в фоновом режиме или в текущем контексте.
 func (dm *DaemonManager) StartDaemon(flags StartDaemonFlags) error {
 	if !flags.Background {
 		// Запускаем процесс в текущем контексте
@@ -89,14 +90,29 @@ func (dm *DaemonManager) runProcess() error {
 	fmt.Println("Daemon successfully started")
 
 	// Запускаем компоненты демона
-	// ...
+	// TODO
 	go func() {
-		time.Sleep(5 * time.Second)
-		fmt.Println("Daemon is running...")
+		tickerWork := time.NewTicker(500 * time.Millisecond)
+		defer tickerWork.Stop()
 
-		ctx.Done() // Имитируем работу демона
+		tickerStop := time.NewTicker(20 * time.Second)
+		defer tickerStop.Stop()
 
-		stop <- syscall.SIGTERM // Имитируем остановку
+		for {
+			select {
+			case <-ctx.Done():
+				fmt.Println("Daemon is stopping...")
+				return
+
+			case <-tickerWork.C:
+				fmt.Println("Daemon is working...")
+
+			case <-tickerStop.C:
+				// Имитируем остановку демона
+				fmt.Println("Daemon is stopping due to timeout...")
+				stop <- syscall.SIGTERM // Имитируем остановку
+			}
+		}
 	}()
 
 	// Ожидаем сигнал остановки
