@@ -5,10 +5,7 @@ type Config struct {
 	LoadAverage bool `mapstructure:"load_average"`
 	DiskUsage   bool `mapstructure:"disk_usage"`
 
-	GRPC struct {
-		Host string `mapstructure:"host"`
-		Port int    `mapstructure:"port"`
-	} `mapstructure:"grpc"`
+	AddrGRPC string `mapstructure:"addr_grpc"`
 }
 
 func NewConfig(configFile string) (*Config, error) {
@@ -16,9 +13,6 @@ func NewConfig(configFile string) (*Config, error) {
 	if err := LoadConfig(instance, configFile); err != nil {
 		return nil, err
 	}
-
-	//instance.GRPC.Host = "0.0.0.0"
-	//instance.GRPC.Port = 50051
 
 	return instance, nil
 }

@@ -1,16 +1,14 @@
 package command
 
-import (
-	"github.com/a2gx/sys-stats/internal/daemon"
-	"github.com/spf13/cobra"
-)
+import "github.com/spf13/cobra"
 
-func NewCommandLogs() *cobra.Command {
+func NewLogs() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "logs",
-		Short: "Show daemon logs",
+		Short: "Display logs from the sys-stats daemon",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return daemon.LogsDaemon()
+			// TODO: Implement the logic to connect to the sys-stats daemon and retrieve logs.
+			return nil
 		},
 	}
 

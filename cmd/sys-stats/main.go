@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/a2gx/sys-stats/internal/command"
@@ -8,18 +9,19 @@ import (
 )
 
 func main() {
-	rootCmd := &cobra.Command{
+	rootCmd := cobra.Command{
 		Use:   "sys-stats",
 		Short: "System Statistics Daemon",
 	}
 
 	rootCmd.AddCommand(
-		command.NewCommandRun(),
-		command.NewCommandLogs(),
-		command.NewCommandStop(),
+		command.NewRun(),
+		command.NewLogs(),
+		command.NewStop(),
 	)
 
 	if err := rootCmd.Execute(); err != nil {
+		fmt.Printf("Error executing command: %v", err)
 		os.Exit(1)
 	}
 }
