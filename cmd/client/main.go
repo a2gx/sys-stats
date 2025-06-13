@@ -104,13 +104,14 @@ func runClient(addr string, logInterval, dataInterval int32) error {
 			counter++
 			now := time.Now().Format("15:04:05")
 
-			fmt.Printf("Received data at %s (count: %d):\n", now, counter)
-			fmt.Printf("\tLoad Average: %.2f\n", resp.LoadAverage)
-			fmt.Printf("\tCPU Usage:\n\t\tUser: %d%%,\n\t\tSystem: %d%%,\n\t\tIdle: %d%%\n",
+			str := fmt.Sprintf("Received data at %s (count: %d):\n", now, counter)
+			str += fmt.Sprintf("\tLoad Average: %.2f%%\n", resp.LoadAverage)
+			str += fmt.Sprintf("\tCPU Usage:\n\t\tUser: %.2f\n\t\tSystem: %.2f\n\t\tIdle: %.2f\n",
 				resp.CpuUsage.User, resp.CpuUsage.System, resp.CpuUsage.Idle)
-			fmt.Printf("\tDisk Usage:\n\t\tTPS: %d,\n\t\tKBps: %d\n",
+			str += fmt.Sprintf("\tDisk Usage:\n\t\tTPS: %.2f,\n\t\tKBps: %.2f\n",
 				resp.DiskUsage.Tps, resp.DiskUsage.KbPs)
-			fmt.Printf("----------------------------------------\n")
+
+			fmt.Printf("%s\n----------------------------------------\n", str)
 		}
 	}()
 

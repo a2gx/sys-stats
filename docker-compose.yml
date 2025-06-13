@@ -40,5 +40,5 @@ services:
     environment:
       - GRPC_HOST=daemon
       - GRPC_PORT=50055
-      - LOG_INTERVAL=3
-      - DATA_INTERVAL=12
+      - LOG_INTERVAL=10
+      - DATA_INTERVAL=15
