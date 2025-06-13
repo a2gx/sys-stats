@@ -7,6 +7,10 @@ import (
 	"github.com/a2gx/sys-stats/internal/config"
 )
 
+var GetLoadAverage = getLoadAverageImpl
+var GetCpuUsage = getCpuUsageImpl
+var GetDiskUsage = getDiskUsageImpl
+
 type Collector struct {
 	history []*History
 	cfg     *config.Config

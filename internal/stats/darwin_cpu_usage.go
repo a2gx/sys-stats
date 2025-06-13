@@ -19,7 +19,7 @@ type CPUStat struct {
 // Пример строки: "CPU usage: 7.74% user, 8.91% sys, 83.33% idle"
 var re = regexp.MustCompile(`([\d.]+)% user, ([\d.]+)% sys, ([\d.]+)% idle`)
 
-func GetCpuUsage() (CPUStat, error) {
+func getCpuUsageImpl() (CPUStat, error) {
 	cmd := exec.Command("top", "-l", "1", "-n", "0")
 	out, err := cmd.Output()
 	if err != nil {
