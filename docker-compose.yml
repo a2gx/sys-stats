@@ -13,8 +13,8 @@ services:
       - GRPC_HOST=0.0.0.0
       - GRPC_PORT=50055
 
-  client:
-    container_name: client
+  client_one:
+    container_name: client_one
     build:
       context: .
       dockerfile: ./build/Dockerfile_client
@@ -27,3 +27,18 @@ services:
       - GRPC_PORT=50055
       - LOG_INTERVAL=5
       - DATA_INTERVAL=10
+
+  client_two:
+    container_name: client_two
+    build:
+      context: .
+      dockerfile: ./build/Dockerfile_client
+    depends_on:
+      - daemon
+    volumes:
+      - ./configs:/configs:ro
+    environment:
+      - GRPC_HOST=daemon
+      - GRPC_PORT=50055
+      - LOG_INTERVAL=3
+      - DATA_INTERVAL=12

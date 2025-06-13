@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	daemon2 "github.com/a2gx/sys-stats/proto/daemon"
 	"io"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	daemon "github.com/a2gx/sys-stats/proto"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -70,11 +70,11 @@ func runClient(addr string, logInterval, dataInterval int32) error {
 	cnErr := make(chan error, 1)
 
 	// Создаем gRPC клиент
-	client := daemon.NewDaemonStreamClient(conn)
+	client := daemon2.NewDaemonStreamClient(conn)
 
 	go func() {
 		// Создаем поток для получения данных
-		stream, err := client.SysStatsStream(ctx, &daemon.SysStatsStreamRequest{
+		stream, err := client.SysStatsStream(ctx, &daemon2.SysStatsStreamRequest{
 			LogInterval:  logInterval,
 			DataInterval: dataInterval,
 		})

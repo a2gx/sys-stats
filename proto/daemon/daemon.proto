@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package daemon;
 
-option go_package = "github.com/a2gx/daemon/proto;daemon";
+option go_package = "github.com/a2gx/daemon/proto/daemon";
 
 service DaemonStream {
   rpc SysStatsStream(SysStatsStreamRequest) returns (stream SysStatsStreamResponse);

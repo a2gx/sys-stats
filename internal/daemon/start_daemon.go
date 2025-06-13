@@ -1,14 +1,14 @@
 package daemon
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"os/exec"
 	"os/signal"
 	"strconv"
 	"syscall"
-	"time"
+
+	"github.com/a2gx/sys-stats/internal/server"
 )
 
 type StartDaemonFlags struct {
@@ -83,37 +83,16 @@ func (dm *DaemonManager) runProcess() error {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
 
-	// Создаем контекст для отмены
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	fmt.Println("Daemon successfully started")
-
-	// Запускаем компоненты демона
-	// TODO
+	// Запуск gRPC сервера
+	srv := server.NewServer(dm.cfg)
 	go func() {
-		tickerWork := time.NewTicker(time.Second)
-		defer tickerWork.Stop()
-
-		tickerStop := time.NewTicker(10 * time.Second)
-		defer tickerStop.Stop()
-
-		for {
-			select {
-			case <-ctx.Done():
-				fmt.Println("Daemon is stopping...")
-				return
-
-			case <-tickerWork.C:
-				fmt.Println("Daemon is working...")
-
-			case <-tickerStop.C:
-				// Имитируем остановку демона
-				fmt.Println("Daemon is stopping due to timeout...")
-				stop <- syscall.SIGTERM // Имитируем остановку
-			}
+		if err := srv.Start(dm.cfg.AddrGRPC); err != nil {
+			fmt.Printf("gRPC server error: %v\n", err)
+			stop <- syscall.SIGTERM
 		}
 	}()
+
+	fmt.Println("Daemon successfully started")
 
 	// Ожидаем сигнал остановки
 	<-stop
