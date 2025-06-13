@@ -17,7 +17,7 @@ stop: build
 	$(BIN) stop
 
 version: build
-	$(BIN) -v
+	$(BIN) --version
 
 help: build
 	$(BIN) -h

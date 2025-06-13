@@ -1,7 +1,7 @@
 services:
 
   daemon:
-    container_name: app_daemon
+    container_name: daemon
     build:
       context: .
       dockerfile: build/Dockerfile
@@ -23,7 +23,7 @@ services:
     volumes:
       - ./configs:/configs:ro
     environment:
-      - GRPC_HOST=app_daemon
+      - GRPC_HOST=daemon
       - GRPC_PORT=50055
       - LOG_INTERVAL=5
       - DATA_INTERVAL=10

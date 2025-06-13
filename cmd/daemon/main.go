@@ -10,8 +10,9 @@ import (
 
 func main() {
 	rootCmd := cobra.Command{
-		Use:   "daemon",
-		Short: "System Statistics Daemon",
+		Use:     "daemon",
+		Short:   "System Statistics Daemon",
+		Version: getVersion(),
 	}
 
 	rootCmd.AddCommand(
