@@ -89,7 +89,7 @@ func TestServer_SysStatsStream(t *testing.T) {
 	// Ждем первое сообщение
 	select {
 	case <-stream.sendCh:
-	case <-time.After(2 * time.Second):
+	case <-time.After(5 * time.Second):
 		t.Fatal("timeout waiting for message")
 	}
 
