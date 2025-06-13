@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v5.29.3
-// source: proto/daemon.proto
+// source: proto/daemon/daemon.proto
 
 package daemon
 
@@ -23,13 +23,15 @@ const (
 
 type SysStatsStreamRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	LogInterval   int32                  `protobuf:"varint,1,opt,name=log_interval,json=logInterval,proto3" json:"log_interval,omitempty"`    // Интервал отправки данных (в секундах)
+	DataInterval  int32                  `protobuf:"varint,2,opt,name=data_interval,json=dataInterval,proto3" json:"data_interval,omitempty"` // Период агрегации данных (в секундах)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *SysStatsStreamRequest) Reset() {
 	*x = SysStatsStreamRequest{}
-	mi := &file_proto_daemon_proto_msgTypes[0]
+	mi := &file_proto_daemon_daemon_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -41,7 +43,7 @@ func (x *SysStatsStreamRequest) String() string {
 func (*SysStatsStreamRequest) ProtoMessage() {}
 
 func (x *SysStatsStreamRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_daemon_proto_msgTypes[0]
+	mi := &file_proto_daemon_daemon_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -54,7 +56,21 @@ func (x *SysStatsStreamRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysStatsStreamRequest.ProtoReflect.Descriptor instead.
 func (*SysStatsStreamRequest) Descriptor() ([]byte, []int) {
-	return file_proto_daemon_proto_rawDescGZIP(), []int{0}
+	return file_proto_daemon_daemon_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *SysStatsStreamRequest) GetLogInterval() int32 {
+	if x != nil {
+		return x.LogInterval
+	}
+	return 0
+}
+
+func (x *SysStatsStreamRequest) GetDataInterval() int32 {
+	if x != nil {
+		return x.DataInterval
+	}
+	return 0
 }
 
 type SysStatsStreamResponse struct {
@@ -68,7 +84,7 @@ type SysStatsStreamResponse struct {
 
 func (x *SysStatsStreamResponse) Reset() {
 	*x = SysStatsStreamResponse{}
-	mi := &file_proto_daemon_proto_msgTypes[1]
+	mi := &file_proto_daemon_daemon_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -80,7 +96,7 @@ func (x *SysStatsStreamResponse) String() string {
 func (*SysStatsStreamResponse) ProtoMessage() {}
 
 func (x *SysStatsStreamResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_daemon_proto_msgTypes[1]
+	mi := &file_proto_daemon_daemon_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -93,7 +109,7 @@ func (x *SysStatsStreamResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysStatsStreamResponse.ProtoReflect.Descriptor instead.
 func (*SysStatsStreamResponse) Descriptor() ([]byte, []int) {
-	return file_proto_daemon_proto_rawDescGZIP(), []int{1}
+	return file_proto_daemon_daemon_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *SysStatsStreamResponse) GetLoadAverage() float32 {
@@ -128,7 +144,7 @@ type CpuUsage struct {
 
 func (x *CpuUsage) Reset() {
 	*x = CpuUsage{}
-	mi := &file_proto_daemon_proto_msgTypes[2]
+	mi := &file_proto_daemon_daemon_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -140,7 +156,7 @@ func (x *CpuUsage) String() string {
 func (*CpuUsage) ProtoMessage() {}
 
 func (x *CpuUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_daemon_proto_msgTypes[2]
+	mi := &file_proto_daemon_daemon_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -153,7 +169,7 @@ func (x *CpuUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CpuUsage.ProtoReflect.Descriptor instead.
 func (*CpuUsage) Descriptor() ([]byte, []int) {
-	return file_proto_daemon_proto_rawDescGZIP(), []int{2}
+	return file_proto_daemon_daemon_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CpuUsage) GetUser() float32 {
@@ -187,7 +203,7 @@ type DiskUsage struct {
 
 func (x *DiskUsage) Reset() {
 	*x = DiskUsage{}
-	mi := &file_proto_daemon_proto_msgTypes[3]
+	mi := &file_proto_daemon_daemon_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -199,7 +215,7 @@ func (x *DiskUsage) String() string {
 func (*DiskUsage) ProtoMessage() {}
 
 func (x *DiskUsage) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_daemon_proto_msgTypes[3]
+	mi := &file_proto_daemon_daemon_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -212,7 +228,7 @@ func (x *DiskUsage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DiskUsage.ProtoReflect.Descriptor instead.
 func (*DiskUsage) Descriptor() ([]byte, []int) {
-	return file_proto_daemon_proto_rawDescGZIP(), []int{3}
+	return file_proto_daemon_daemon_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *DiskUsage) GetTps() float32 {
@@ -229,12 +245,14 @@ func (x *DiskUsage) GetKbPs() float32 {
 	return 0
 }
 
-var File_proto_daemon_proto protoreflect.FileDescriptor
+var File_proto_daemon_daemon_proto protoreflect.FileDescriptor
 
-const file_proto_daemon_proto_rawDesc = "" +
+const file_proto_daemon_daemon_proto_rawDesc = "" +
 	"\n" +
-	"\x12proto/daemon.proto\x12\x06daemon\"\x17\n" +
-	"\x15SysStatsStreamRequest\"\x9c\x01\n" +
+	"\x19proto/daemon/daemon.proto\x12\x06daemon\"_\n" +
+	"\x15SysStatsStreamRequest\x12!\n" +
+	"\flog_interval\x18\x01 \x01(\x05R\vlogInterval\x12#\n" +
+	"\rdata_interval\x18\x02 \x01(\x05R\fdataInterval\"\x9c\x01\n" +
 	"\x16SysStatsStreamResponse\x12!\n" +
 	"\fload_average\x18\x01 \x01(\x02R\vloadAverage\x12-\n" +
 	"\tcpu_usage\x18\x02 \x01(\v2\x10.daemon.CpuUsageR\bcpuUsage\x120\n" +
@@ -248,28 +266,28 @@ const file_proto_daemon_proto_rawDesc = "" +
 	"\x03tps\x18\x01 \x01(\x02R\x03tps\x12\x13\n" +
 	"\x05kb_ps\x18\x02 \x01(\x02R\x04kbPs2a\n" +
 	"\fDaemonStream\x12Q\n" +
-	"\x0eSysStatsStream\x12\x1d.daemon.SysStatsStreamRequest\x1a\x1e.daemon.SysStatsStreamResponse0\x01B(Z&github.com/a2gx/sys-stats/proto/daemonb\x06proto3"
+	"\x0eSysStatsStream\x12\x1d.daemon.SysStatsStreamRequest\x1a\x1e.daemon.SysStatsStreamResponse0\x01B%Z#github.com/a2gx/daemon/proto/daemonb\x06proto3"
 
 var (
-	file_proto_daemon_proto_rawDescOnce sync.Once
-	file_proto_daemon_proto_rawDescData []byte
+	file_proto_daemon_daemon_proto_rawDescOnce sync.Once
+	file_proto_daemon_daemon_proto_rawDescData []byte
 )
 
-func file_proto_daemon_proto_rawDescGZIP() []byte {
-	file_proto_daemon_proto_rawDescOnce.Do(func() {
-		file_proto_daemon_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_daemon_proto_rawDesc), len(file_proto_daemon_proto_rawDesc)))
+func file_proto_daemon_daemon_proto_rawDescGZIP() []byte {
+	file_proto_daemon_daemon_proto_rawDescOnce.Do(func() {
+		file_proto_daemon_daemon_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_daemon_daemon_proto_rawDesc), len(file_proto_daemon_daemon_proto_rawDesc)))
 	})
-	return file_proto_daemon_proto_rawDescData
+	return file_proto_daemon_daemon_proto_rawDescData
 }
 
-var file_proto_daemon_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_proto_daemon_proto_goTypes = []any{
+var file_proto_daemon_daemon_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_proto_daemon_daemon_proto_goTypes = []any{
 	(*SysStatsStreamRequest)(nil),  // 0: daemon.SysStatsStreamRequest
 	(*SysStatsStreamResponse)(nil), // 1: daemon.SysStatsStreamResponse
 	(*CpuUsage)(nil),               // 2: daemon.CpuUsage
 	(*DiskUsage)(nil),              // 3: daemon.DiskUsage
 }
-var file_proto_daemon_proto_depIdxs = []int32{
+var file_proto_daemon_daemon_proto_depIdxs = []int32{
 	2, // 0: daemon.SysStatsStreamResponse.cpu_usage:type_name -> daemon.CpuUsage
 	3, // 1: daemon.SysStatsStreamResponse.disk_usage:type_name -> daemon.DiskUsage
 	0, // 2: daemon.DaemonStream.SysStatsStream:input_type -> daemon.SysStatsStreamRequest
@@ -281,26 +299,26 @@ var file_proto_daemon_proto_depIdxs = []int32{
 	0, // [0:2] is the sub-list for field type_name
 }
 
-func init() { file_proto_daemon_proto_init() }
-func file_proto_daemon_proto_init() {
-	if File_proto_daemon_proto != nil {
+func init() { file_proto_daemon_daemon_proto_init() }
+func file_proto_daemon_daemon_proto_init() {
+	if File_proto_daemon_daemon_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_daemon_proto_rawDesc), len(file_proto_daemon_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_daemon_daemon_proto_rawDesc), len(file_proto_daemon_daemon_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_proto_daemon_proto_goTypes,
-		DependencyIndexes: file_proto_daemon_proto_depIdxs,
-		MessageInfos:      file_proto_daemon_proto_msgTypes,
+		GoTypes:           file_proto_daemon_daemon_proto_goTypes,
+		DependencyIndexes: file_proto_daemon_daemon_proto_depIdxs,
+		MessageInfos:      file_proto_daemon_daemon_proto_msgTypes,
 	}.Build()
-	File_proto_daemon_proto = out.File
-	file_proto_daemon_proto_goTypes = nil
-	file_proto_daemon_proto_depIdxs = nil
+	File_proto_daemon_daemon_proto = out.File
+	file_proto_daemon_daemon_proto_goTypes = nil
+	file_proto_daemon_daemon_proto_depIdxs = nil
 }

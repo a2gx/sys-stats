@@ -10,8 +10,8 @@ import (
 	"strings"
 )
 
-// GetLoadAverage возвращает среднюю загрузку системы за последние 1, 5 и 15 минут.
-func GetLoadAverage() (float64, error) {
+// getLoadAverageImpl возвращает среднюю загрузку системы за последние 1, 5 и 15 минут.
+func getLoadAverageImpl() (float64, error) {
 	cmd := exec.Command("sysctl", "-n", "vm.loadavg")
 	out, err := cmd.Output()
 	if err != nil {

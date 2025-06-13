@@ -2,13 +2,16 @@ syntax = "proto3";
 
 package daemon;
 
-option go_package = "github.com/a2gx/sys-stats/proto/daemon";
+option go_package = "github.com/a2gx/daemon/proto/daemon";
 
 service DaemonStream {
   rpc SysStatsStream(SysStatsStreamRequest) returns (stream SysStatsStreamResponse);
 }
 
-message SysStatsStreamRequest {}
+message SysStatsStreamRequest {
+  int32 log_interval = 1;   // Интервал отправки данных (в секундах)
+  int32 data_interval = 2;  // Период агрегации данных (в секундах)
+}
 
 message SysStatsStreamResponse {
   float load_average = 1;

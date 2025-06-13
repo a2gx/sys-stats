@@ -5,12 +5,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewCommandLogs() *cobra.Command {
+func NewLogs() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "logs",
-		Short: "Show daemon logs",
+		Short: "Display logs from the daemon daemon",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return daemon.LogsDaemon()
+			// Создаем менеджер демона с параметрами по умолчанию
+			dm := daemon.NewDaemonManager(nil)
+
+			// Отображаем логи демона
+			return dm.LogsDaemon()
 		},
 	}
 

@@ -24,11 +24,11 @@ FROM alpine:3.19
 LABEL SERVICE="sys-stats"
 LABEL MAINTAINERS="alxbuylov@gmail.com"
 
-# Удаляем ненужные пакеты (procps не нужен)
 ENV BIN_FILE /opt/sys-stats/client
 COPY --from=build ${BIN_FILE} ${BIN_FILE}
 
-ENV CONFIG_FILE /etc/sys-stats/config.yaml
-COPY ./configs/config.yaml ${CONFIG_FILE}
-
-CMD ${BIN_FILE} --config ${CONFIG_FILE}
+CMD ${BIN_FILE} \
+    --host ${GRPC_HOST:-0.0.0.0} \
+    --port ${GRPC_PORT:-50051} \
+    --log-interval ${LOG_INTERVAL:-5} \
+    --data-interval ${DATA_INTERVAL:-10}

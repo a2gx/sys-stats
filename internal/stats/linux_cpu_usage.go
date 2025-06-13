@@ -81,7 +81,7 @@ func calculateCPUStat(start, end rawCPU) CPUStat {
 	}
 }
 
-func GetCpuUsage() (CPUStat, error) {
+func getCpuUsageImpl() (CPUStat, error) {
 	start, err := readCPUStat()
 	if err != nil {
 		return CPUStat{}, err

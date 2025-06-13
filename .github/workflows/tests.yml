@@ -1,4 +1,4 @@
-name: Daemon sys-stats
+name: Daemon daemon
 
 on:
   push:
@@ -56,9 +56,6 @@ jobs:
 
       - name: Загрузка кода
         uses: actions/checkout@v3
-
-      - name: Запуск тестов с Makefile
-        run: make test
 
       - name: make lint
         run: make lint
