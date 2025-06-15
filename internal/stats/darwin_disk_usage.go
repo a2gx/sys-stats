@@ -8,6 +8,6 @@ type DiskUsage struct {
 	KBps float64 // Килобайт в секунду (чтение + запись)
 }
 
-func GetDiskUsage() (DiskUsage, error) {
+func getDiskUsageImpl() (DiskUsage, error) {
 	return DiskUsage{}, nil
 }

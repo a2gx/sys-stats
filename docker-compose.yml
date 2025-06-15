@@ -1,20 +1,20 @@
 services:
 
   daemon:
-    container_name: app_daemon
+    container_name: daemon
     build:
       context: .
-      dockerfile: build/Dockerfile_daemon
+      dockerfile: build/Dockerfile
     ports:
       - "50055:50055"
     volumes:
-      - ./configs:/etc/sys-stats:ro
+      - ./configs:/etc/daemon:ro
     environment:
       - GRPC_HOST=0.0.0.0
       - GRPC_PORT=50055
 
-  client:
-    container_name: client
+  client_one:
+    container_name: client_one
     build:
       context: .
       dockerfile: ./build/Dockerfile_client
@@ -23,5 +23,22 @@ services:
     volumes:
       - ./configs:/configs:ro
     environment:
-      - GRPC_HOST=app_daemon
+      - GRPC_HOST=daemon
       - GRPC_PORT=50055
+      - LOG_INTERVAL=5
+      - DATA_INTERVAL=10
+
+  client_two:
+    container_name: client_two
+    build:
+      context: .
+      dockerfile: ./build/Dockerfile_client
+    depends_on:
+      - daemon
+    volumes:
+      - ./configs:/configs:ro
+    environment:
+      - GRPC_HOST=daemon
+      - GRPC_PORT=50055
+      - LOG_INTERVAL=10
+      - DATA_INTERVAL=15

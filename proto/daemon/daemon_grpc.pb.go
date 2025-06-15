@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.29.3
-// source: proto/daemon.proto
+// source: proto/daemon/daemon.proto
 
 package daemon
 
@@ -120,5 +120,5 @@ var DaemonStream_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "proto/daemon.proto",
+	Metadata: "proto/daemon/daemon.proto",
 }

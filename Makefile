@@ -8,13 +8,16 @@ build:
 	go build -v -o $(BIN) -ldflags "$(LDFLAGS)" $(APP)
 
 run: build
-	$(BIN) run -n 3 -m 7
+	$(BIN) run --host localhost --port 50051 --config ./configs/config.yaml
+
+logs: build
+	$(BIN) logs
 
 stop: build
 	$(BIN) stop
 
 version: build
-	$(BIN) -v
+	$(BIN) --version
 
 help: build
 	$(BIN) -h
@@ -31,13 +34,13 @@ lint: lint-install-deps
 generate:
 	protoc --go_out=. --go_opt=paths=source_relative \
 		--go-grpc_out=. \
-		--go-grpc_opt=paths=source_relative proto/daemon.proto
+		--go-grpc_opt=paths=source_relative proto/**/*.proto
 
-up:
+dc-up:
 	docker-compose up --build
-down:
+dc-down:
 	docker-compose down
-logs:
+dc-logs:
 	docker-compose logs -f
 
-.PHONY: build run logs stop version help test lint up logs down
+.PHONY: build run logs stop version help test lint generate dc-up dc-down dc-logs

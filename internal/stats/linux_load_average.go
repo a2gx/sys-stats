@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func GetLoadAverage() (float64, error) {
+func getLoadAverageImpl() (float64, error) {
 	data, err := os.ReadFile("/proc/loadavg")
 	if err != nil {
 		return 0, fmt.Errorf("failed to read /proc/loadavg: %w", err)

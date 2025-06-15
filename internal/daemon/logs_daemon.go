@@ -10,87 +10,110 @@ import (
 	"time"
 )
 
-func LogsDaemon() error {
-	if _, err := os.Stat(PidFile); err != nil {
-		return fmt.Errorf("daemon not running")
+// LogsDaemon отображает логи демона daemon.
+func (dm *DaemonManager) LogsDaemon() error {
+	// Проверяем, запущен ли демон
+	if _, err := os.Stat(dm.pidFilePath); os.IsNotExist(err) {
+		return fmt.Errorf("daemon not running: %w", err)
 	}
 
-	if _, err := os.Stat(LogFile); err != nil {
-		return fmt.Errorf("log file not found: %v", err)
+	// Проверяем наличие файла логов
+	if _, err := os.Stat(dm.logFilePath); os.IsNotExist(err) {
+		return fmt.Errorf("loga file not found: %w", err)
 	}
 
-	logf, err := os.Open(LogFile)
+	// Открываем файл логов
+	logFile, err := os.Open(dm.logFilePath)
 	if err != nil {
-		return fmt.Errorf("failed to open log file: %v", err)
+		return fmt.Errorf("could not open loga file: %w", err)
 	}
 	defer func() {
-		if err := logf.Close(); err != nil {
+		if err := logFile.Close(); err != nil {
 			fmt.Printf("failed to close log file: %v\n", err)
 		}
 	}()
 
-	// Канал для безопасной остановки процесса
+	fmt.Printf("Displaying logs from %s:\n", dm.logFilePath)
+	fmt.Printf("Press Ctrl+C to stop displaying logs.\n")
+
+	// Настраиваем канал для безопасной остановки процесса
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
 
-	// Канал для сообщения о завершении
-	cnDone := make(chan bool)
+	// Канал для завершения горутины мониторинга
+	done := make(chan bool)
 
-	// Выводим текущее содержимое файла
-	scanner := bufio.NewScanner(logf)
+	currentPos, err := dm.displayCurrentLogs(logFile)
+	if err != nil {
+		return fmt.Errorf("error reading current logs: %w", err)
+	}
+
+	// Запускаем горутину для чтения и отслеживания новых логов
+	go dm.monitorNewLogs(logFile, currentPos, stop, done)
+
+	// Ожидаем сигнала остановки
+	<-stop
+	close(done)
+
+	fmt.Println("\nStopping log display...")
+	return nil
+}
+
+// displayCurrentLogs отображает текущее содержимое файла логов
+func (dm *DaemonManager) displayCurrentLogs(file *os.File) (int64, error) {
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		fmt.Println(scanner.Text())
 	}
 
-	// Запоминаем текущую позицию в файле
-	currentPos, err := logf.Seek(0, io.SeekCurrent)
-	if err != nil {
-		return fmt.Errorf("failed to seek current file: %v", err)
+	if err := scanner.Err(); err != nil {
+		return 0, fmt.Errorf("error for scanning log file: %w", err)
 	}
 
-	// Запускаем горутину для чтения логов
-	go func() {
-		ticker := time.NewTicker(100 * time.Millisecond)
-		defer ticker.Stop()
+	return file.Seek(0, io.SeekCurrent)
+}
 
-		for {
-			select {
-			case <-ticker.C:
-				// Если файл удалили, выходим из цикла и останавливаем чтение логов
-				if _, err := os.Stat(LogFile); os.IsNotExist(err) {
-					stop <- syscall.SIGTERM
-					return
-				}
+// monitorNewLogs отслеживает новые записи в файле логов и выводит их
+func (dm *DaemonManager) monitorNewLogs(file *os.File, startPos int64, stop chan os.Signal, done chan bool) {
+	ticker := time.NewTicker(100 * time.Millisecond)
+	defer ticker.Stop()
 
-				// Проверяем, есть ли новые данные
-				fi, err := logf.Stat()
-				if err != nil {
-					_, _ = fmt.Fprintf(os.Stderr, "error getting file info: %v\n", err)
+	currentPos := startPos
+
+	for {
+		select {
+		case <-ticker.C:
+			if _, err := os.Stat(dm.logFilePath); os.IsNotExist(err) {
+				fmt.Println("log file has been deleted, stopping monitoring.")
+				stop <- syscall.SIGTERM
+				return
+			}
+
+			f, err := file.Stat()
+			if err != nil {
+				fmt.Printf("failed reading log file stats: %v\n", err)
+				continue
+			}
+
+			// Если размер файла увеличился, читаем новые строки
+			if size := f.Size(); size > currentPos {
+				// Перемещаем указатель на последнюю прочитанную позицию
+				if _, err := file.Seek(currentPos, io.SeekStart); err != nil {
+					fmt.Printf("failed to seek in log file: %v\n", err)
 					continue
 				}
 
-				// Если размер файла увеличился, читаем новые данные
-				if size := fi.Size(); size > currentPos {
-					_, _ = logf.Seek(currentPos, io.SeekStart)
-
-					newScanner := bufio.NewScanner(logf)
-					for newScanner.Scan() {
-						fmt.Println(newScanner.Text())
-					}
-
-					currentPos, _ = logf.Seek(0, io.SeekCurrent)
+				// Читаем новые строки
+				newScanner := bufio.NewScanner(file)
+				for newScanner.Scan() {
+					fmt.Println(newScanner.Text())
 				}
 
-			case <-cnDone:
-				return
+				currentPos, _ = file.Seek(0, io.SeekCurrent)
 			}
+
+		case <-done:
+			return
 		}
-	}()
-
-	// Ожидаем сигнал завершения
-	<-stop
-	close(cnDone)
-
-	fmt.Println("Daemon successfully stopped")
-	return nil
+	}
 }

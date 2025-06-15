@@ -121,8 +121,8 @@ func totalDiskUsage(start, end map[string]rawDiskUsage, durationSec float64) Dis
 	}
 }
 
-// GetDiskUsage возвращает статистику использования дисков
-func GetDiskUsage() (DiskUsage, error) {
+// getDiskUsageImpl возвращает статистику использования дисков
+func getDiskUsageImpl() (DiskUsage, error) {
 	start, err := readDiskStats()
 	if err != nil {
 		return DiskUsage{}, err

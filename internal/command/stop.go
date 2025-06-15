@@ -5,12 +5,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewCommandStop() *cobra.Command {
+func NewStop() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "stop",
-		Short: "Остановка демона системной статистики",
+		Short: "Stop running daemon",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return daemon.StopDaemon()
+			// Создаем менеджер демона с параметрами по умолчанию
+			dm := daemon.NewDaemonManager(nil)
+
+			// Останавливаем демон
+			return dm.StopDaemon()
 		},
 	}
 
